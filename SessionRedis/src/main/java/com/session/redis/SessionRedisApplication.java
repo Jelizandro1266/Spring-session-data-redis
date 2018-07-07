@@ -28,6 +28,13 @@ public class SessionRedisApplication {
 		SpringApplication.run(SessionRedisApplication.class, args);
 	}
 	
+	/**
+	 * @param sessionRepository
+	 * @param servletContext
+	 * @return
+	 *  contiene la configuracion para agregar un nombre de cookie especifico, de lo contrario Spring utilizara
+	 *  SESSION como cookie principal para guardar la session en redis
+	 */
 	@Bean
 	public <S extends ExpiringSession> SessionRepositoryFilter<? extends ExpiringSession> springSessionRepositoryFilter(
 			SessionRepository<S> sessionRepository, ServletContext servletContext) {
@@ -40,6 +47,10 @@ public class SessionRedisApplication {
 		return sessionRepositoryFilter;
 	}
 
+	/**
+	 * @return
+	 * Bena que devuelve la configuracion necesaria de la cookie
+	 */
 	@Bean
 	public CookieSerializer cookieSerializer() {
 		DefaultCookieSerializer serializer = new DefaultCookieSerializer();
@@ -47,6 +58,10 @@ public class SessionRedisApplication {
 		return serializer;
 	}
 
+	/**
+	 * @return
+	 * Bean con la conexion a redis
+	 */
 	@Bean
 	JedisConnectionFactory jedisConnectionFactory() {
 		JedisConnectionFactory jedisConFactory = new JedisConnectionFactory();
@@ -57,6 +72,11 @@ public class SessionRedisApplication {
 		return jedisConFactory;
 	}
 
+	
+	/**
+	 * @return 
+	 * Bean con la creacion del RedisTemplate
+	 */
 	@Bean
 	public RedisTemplate<String, Object> redisTemplate() {
 		final RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
@@ -65,14 +85,21 @@ public class SessionRedisApplication {
 		return template;
 	}
 	
+	
+	/**
+	 * @return
+	 * configuracion para agregar un name space al registro de session, 
+	 * el maximo tiempo de vida de la session en segundos,
+	 * Y el metodo de guardado en redis
+	 * (RedisFlushMode.IMMEDIATE= realiza los cambios en BD de manera inmediata cada que se altera la session,
+	 *  RedisFlushMode.ON_SAVE = realiza los cambios en BD hasta que la peticion http es despachada.)
+	 */
 	@Bean
 	public RedisOperationsSessionRepository sessionRepository() {
-		
-		RedisOperationsSessionRepository sessionRepository = new RedisOperationsSessionRepository(
-				jedisConnectionFactory());
+		RedisOperationsSessionRepository sessionRepository = new RedisOperationsSessionRepository(jedisConnectionFactory());
 		
 		sessionRepository.setDefaultMaxInactiveInterval(60);
-		sessionRepository.setRedisKeyNamespace("we:hola");
+		sessionRepository.setRedisKeyNamespace("demo:redis");
 		
 		sessionRepository.setRedisFlushMode(RedisFlushMode.IMMEDIATE);
 		return sessionRepository;
