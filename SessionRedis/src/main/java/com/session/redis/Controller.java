@@ -2,6 +2,10 @@ package com.session.redis;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.session.redis.beans.Direccion;
+import com.session.redis.beans.Persona;
+
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 
@@ -17,10 +21,23 @@ public class Controller {
     public String index(HttpServletRequest req) {
     	
     	if(req.getSession(false) == null){
-    		req.getSession();
+    		HttpSession session = req.getSession();
     		System.out.println("****************************************************");
     		System.out.println("Se crea Session :)");
     		System.out.println("****************************************************");
+    		Direccion direccion = new Direccion();
+    		direccion.setCalle("Michoacan");
+    		direccion.setColonia("Hidalgo");
+    		direccion.setNumero("A201");
+    		
+    		Persona persona = new Persona();
+    		persona.setDirecciones(Arrays.asList(direccion));
+    		persona.setEdad(25);
+    		persona.setFechaNacimiento(new Date());
+    		persona.setNombre("Yisus");
+    		
+    		session.setAttribute("persona", persona);
+    		
     	}else{
     		System.out.println("****************************************************");
     		System.out.println("Ya hay una session :)");

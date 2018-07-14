@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '1.5.4.RELEASE'
+		springBootVersion = '1.4.5.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -27,7 +27,11 @@ repositories {
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
 	compile('org.springframework.boot:spring-boot-starter-data-redis')
-	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-web'){
+	    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+	}
+	compile('org.springframework.boot:spring-boot-starter-undertow')
+
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile group: 'org.springframework.session', name: 'spring-session-data-redis'
 	
